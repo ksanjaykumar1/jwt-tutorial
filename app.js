@@ -1,4 +1,6 @@
 require("dotenv").config();
+require("express-async-errors");
+
 const express = require("express");
 const app = express();
 const Logger = require("./logger/logger");
@@ -7,6 +9,8 @@ const connect = require("./utils/db");
 const notFound = require("./utils/middleware/not-found");
 const errorHandlerMiddleware = require("./utils/middleware/error-handler");
 const morgan = require("morgan");
+
+const mainRouter = require('./routes/main')
 
 const PORT = process.env.PORT || 3000;
 app.use(express.json({ extend: false }));
@@ -40,11 +44,10 @@ switch (process.env.ENVIRONMENT) {
     );
   }
 }
-app.get("/", (req, res) => {
-  res.status(200).json({ msg: "hello world" });
-});
 
 app.use(express.static("./public"));
+
+app.use('/api/v1/',mainRouter)
 
 app.use(notFound);
 app.use(errorHandlerMiddleware);
