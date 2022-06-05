@@ -24,28 +24,13 @@ const login = async (req, res) => {
 };
 
 const dashboard = async (req, res) => {
-  const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer")) {
-    throw new CustomAPIError("Invaild Bearer Token", 401);
-  }
-  const token = authHeader.split(" ")[1];
-  logger.info(token);
-
-  try {
-    const decoded = jwt.verify(token, process.env.API_SECRET);
-    logger.info(JSON.stringify(decoded));
-    const luckyNumber = Math.floor(Math.random() * 100);
-    res.status(200).json({
-      msg: `Hello ${decoded.username}`,
-      secret: `you lucky number is ${luckyNumber}`,
-    });
-  } catch (error) {
-    // throw response if not able to verify token
-    // for reason like expired key, wrong API key
-
-    throw new CustomAPIError("Not authorized to access this route", 401);
-  }
+  logger.info("user ==>", JSON.stringify(req.user))
+  const luckyNumber = Math.floor(Math.random() * 100);
+  res.status(200).json({
+    msg: `Hello ${req.user.username}`,
+    secret: `you lucky number is ${luckyNumber}`,
+  });
 };
 
 module.exports = {
